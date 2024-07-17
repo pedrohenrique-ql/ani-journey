@@ -1,0 +1,8 @@
+# Dependencies
+/node_modules
+
+# Build
+/out
+
+# Configuration
+/.lintstagedrc.js
