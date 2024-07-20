@@ -2,9 +2,8 @@
   "name": "ani-journey",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "dev": "dotenv -c development -- tsx watch src/index.ts",
+    "dev": "dotenv -c development -- tsx watch src/server.ts",
     "build": "dotenv -c production -- tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
