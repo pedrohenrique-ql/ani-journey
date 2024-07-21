@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "scripts": {
-    "dev": "dotenv -c development -- tsx watch src/server.ts",
-    "build": "dotenv -c production -- tsup",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "dotenv -c development -- ts-node --transpileOnly src/server.ts",
+    "start": "dotenv -c production -- node dist/server.js",
+    "build": "tsc"
   },
-  "packageManager": "pnpm@8.15.3",
   "author": "Pedro Henrique Queiroz Lúcio",
   "license": "MIT",
   "dependencies": {
@@ -24,6 +23,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "prettier": "^3.3.2",
     "prettier-plugin-sh": "^0.14.0",
+    "ts-node": "^10.9.2",
     "tsup": "^8.1.0",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
