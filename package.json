@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "dotenv -c development -- tsx watch src/index.ts",
     "deps:up": "docker compose up ani-journey-postgres-db -d --wait",
-    "deps:preapre": "pnpm db:dev migrate dev",
+    "deps:prepare": "pnpm db:dev migrate dev",
     "db:dev": "dotenv -c development -- prisma",
     "build": "dotenv -c production -- tsup",
     "test": "echo \"Error: no test specified\" && exit 1"
