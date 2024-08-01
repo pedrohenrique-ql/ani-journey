@@ -1,0 +1,22 @@
+services:
+  ani-journey-postgres-db:
+    image: postgres
+    container_name: ani-journey-postgres-db
+    networks:
+      - ani-journey
+    volumes:
+      - ani-journey-postgres-db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ani-journey
+      POSTGRES_PASSWORD: ani-journey
+      POSTGRES_DB: ani-journey
+    ports:
+      - 5432:5432
+
+networks:
+  ani-journey:
+    driver: bridge
+
+volumes:
+  ani-journey-postgres-db:
+    driver: local
