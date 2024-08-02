@@ -2,16 +2,15 @@
   "name": "ani-journey",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "packageManager": "pnpm@8.15.5",
   "scripts": {
-    "dev": "dotenv -c development -- tsx watch src/index.ts",
+    "dev": "dotenv -c development -- ts-node --transpileOnly src/server.ts",
     "deps:up": "docker compose up ani-journey-postgres-db -d --wait",
     "deps:prepare": "pnpm db:dev migrate dev",
     "db:dev": "dotenv -c development -- prisma",
-    "build": "dotenv -c production -- tsup",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "dotenv -c production -- node dist/server.js",
+    "build": "tsc"
   },
-  "packageManager": "pnpm@8.15.3",
   "author": "Pedro Henrique Queiroz Lúcio",
   "license": "MIT",
   "dependencies": {
@@ -21,16 +20,24 @@
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.14.10",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
     "dotenv-cli": "^7.4.2",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-import-helpers": "^1.3.1",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.3.2",
     "prettier-plugin-sh": "^0.14.0",
     "prisma": "^5.17.0",
     "tsup": "^8.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "gulp": "^5.0.0",
+    "gulp-nodemon": "^2.5.0",
+    "gulp-tslint": "^8.1.4",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "prettier": "^3.3.3",
+    "ts-node": "^10.9.2",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"
   }
