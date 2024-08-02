@@ -12,7 +12,7 @@ model User {
   email    String @unique
   username String
   password String
-  role     Role   @default(USER)
+  role     Role   @default(NORMAL)
 
   UserAnime    UserAnime[]
   UserFavorite UserFavorite[]
@@ -49,7 +49,7 @@ model UserFavorite {
 }
 
 enum Role {
-  USER
+  NORMAL
   ADMIN
 }
 

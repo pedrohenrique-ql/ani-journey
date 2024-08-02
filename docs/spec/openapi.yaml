@@ -1,0 +1,658 @@
+openapi: 3.0.3
+info:
+  title: Anime Management API
+  description: API para gerenciar animes, usuários, e favoritos.
+  version: 1.0.0-oas3.1
+paths:
+  /auth/login:
+    post:
+      summary: Autentica um usuário e retorna um token de acesso
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  format: email
+                  example: user@email.com
+                password:
+                  type: string
+                  example: password
+      responses:
+        '200':
+          description: Usuário autenticado.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accessToken
+                  - refreshToken
+                properties:
+                  accessToken:
+                    type: string
+                    example: access_token_example
+                  refresh_token:
+                    type: string
+                    example: refresh_token_example
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Credenciais inválidas.
+
+  /auth/logout:
+    post:
+      summary: Desloga o usuário e invalida o token de acesso.
+      tags:
+        - Auth
+      security:
+        - bearerAuth: []
+      responses:
+        '204':
+          description: Logout realizado com sucesso.
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /auth/refresh-token:
+    post:
+      summary: Atualiza o token de acesso.
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  example: refresh_token_example
+      responses:
+        '200':
+          description: Token de acesso atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - accessToken
+                properties:
+                  accessToken:
+                    type: string
+                    example: new_access_token_example
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /auth/reset-password:
+    post:
+      summary: Permite que o usuário altere sua senha.
+      tags:
+        - Auth
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - oldPassword
+                - newPassword
+              properties:
+                oldPassword:
+                  type: string
+                  example: old_password_example
+                newPassword:
+                  type: string
+                  example: new_password_example
+      responses:
+        '204':
+          description: Senha atualizada com sucesso.
+        '400':
+          description: Erro de validação ou na atualização da senha.
+        '401':
+          description: Usuário não autenticado.
+
+  /auth/forgot-password:
+    post:
+      summary: Envia um e-mail com um link para redefinir a senha.
+      tags:
+        - Auth
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+      responses:
+        '200':
+          description: Link de redefinição de senha enviado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password reset link sent
+        '400':
+          description: Erro de validação ou no envio do e-mail.
+        '401':
+          description: Usuário não autenticado.
+  /users:
+    post:
+      summary: Cria um novo usuário.
+      tags:
+        - User
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                  example: new_user
+                email:
+                  type: string
+                  format: email
+                  example: new_user@example.com
+                password:
+                  type: string
+                  example: password_example
+      responses:
+        '201':
+          description: Usuário criado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Erro de validação.
+
+  /users/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      summary: Buscar usuário.
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Usuário encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Usuário não encontrado.
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+    patch:
+      summary: Atualiza as informações do usuário.
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: updated_email@email.com
+                username:
+                  type: string
+                  example: new_username_example
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /animes:
+    get:
+      summary: Retorna uma lista de animes com suporte a paginação.
+      tags:
+        - Anime
+      parameters:
+        - name: pageSize
+          in: query
+          description: Número de itens por página.
+          required: false
+          schema:
+            type: integer
+        - name: pageNumber
+          in: query
+          description: Número da página.
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de animes retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - page
+                  - pageSize
+                  - total
+                  - animes
+                properties:
+                  page:
+                    type: integer
+                    example: 1
+                  pageSize:
+                    type: integer
+                    example: 10
+                  total:
+                    type: integer
+                    example: 100
+                  animes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Anime'
+        '400':
+          description: Erro de validação.
+
+  /animes/{animeId}:
+    get:
+      summary: Retorna detalhes de um anime específico.
+      tags:
+        - Anime
+      parameters:
+        - name: animeId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Detalhes do anime retornados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Anime'
+        '404':
+          description: Anime não encontrado.
+        '400':
+          description: Erro de validação.
+
+  /users/{userId}/animes:
+    get:
+      summary: Retorna a lista de animes relacionados a um usuário, com suporte para filtragem por status e paginação.
+      tags:
+        - UserAnime
+      parameters:
+        - name: userId
+          in: path
+          description: 'ID do usuário.'
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Filtro por status (`COMPLETED`, `TO_WATCH`, `WATCHING`).
+          required: false
+          schema:
+            type: string
+        - name: pageSize
+          in: query
+          description: Número de itens por página.
+          required: false
+          schema:
+            type: integer
+        - name: pageNumber
+          in: query
+          description: Número da página.
+          required: false
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de animes do usuário retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    example: 1
+                  pageSize:
+                    type: integer
+                    example: 10
+                  total:
+                    type: integer
+                    example: 50
+                  userAnimes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserAnime'
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /users/{userId}/animes/{animeId}:
+    put:
+      summary: Adiciona um anime à lista de um usuário ou atualiza o status e/ou nota de um anime existente.
+      tags:
+        - UserAnime
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: animeId
+          in: path
+          description: ID do anime.
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  $ref: '#/components/schemas/WatchStatus'
+                rating:
+                  type: number
+                  format: float
+                  example: 5
+      responses:
+        '200':
+          description: Anime adicionado ou atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'User anime updated successfully'
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /users/{id}/favorites:
+    get:
+      summary: Retorna a lista de animes favoritos de um usuário, com suporte para paginação.
+      tags:
+        - Favorites
+      parameters:
+        - name: id
+          in: path
+          description: 'ID do usuário.'
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          description: 'Número de itens por página.'
+          required: false
+          schema:
+            type: integer
+        - name: pageNumber
+          in: query
+          description: 'Número da página.'
+          required: false
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 'Lista de favoritos do usuário retornada com sucesso.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  page:
+                    type: integer
+                    example: 1
+                  pageSize:
+                    type: integer
+                    example: 10
+                  total:
+                    type: integer
+                    example: 30
+                  favorites:
+                    type: array
+                    items:
+                      - $ref: '#/components/schemas/UserAnime'
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /users/{userId}/favorites:
+    post:
+      summary: Adiciona um anime à lista de favoritos de um usuário.
+      tags:
+        - Favorites
+      parameters:
+        - name: userId
+          in: path
+          description: ID do usuário.
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                animeId:
+                  type: integer
+                  example: 1
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Anime adicionado aos favoritos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Anime added to favorites
+        '400':
+          description: Erro de validação.
+        '401':
+          description: Usuário não autenticado.
+
+  /users/{userId}/favorites/{animeId}:
+    delete:
+      summary: Remove um anime da lista de favoritos de um usuário.
+      tags:
+        - Favorites
+      parameters:
+        - name: userId
+          in: path
+          description: 'ID do usuário.'
+          required: true
+          schema:
+            type: integer
+        - name: animeId
+          in: path
+          description: ID do anime.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'Anime removido dos favoritos.'
+        '400':
+          description: 'Erro na solicitação.'
+        '401':
+          description: Usuário não autenticado.
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - username
+        - email
+        - role
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+          example: username_example
+        email:
+          type: string
+          format: email
+          example: user@email.com
+        type:
+          type: string
+          enum:
+            - NORMAL
+            - ADMIN
+          example: NORMAL
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-07-02T00:00:00.000Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-07-02T00:00:00.000Z'
+
+    Anime:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        englishTitle:
+          type: string
+          example: Attack on Titan
+        japaneseTitle:
+          type: string
+          example: 進撃の巨人
+        episodes:
+          type: integer
+          example: 56
+        synopsis:
+          type: string
+          example: Synopsis example...
+        image:
+          type: string
+          example: https://cdn.myanimelist.net/images/anime/4/19644.jpg
+        rating:
+          type: number
+          format: float
+          example: 9.8
+        favorites:
+          type: integer
+          example: 99999
+        status:
+          type: string
+          enum:
+            - FINISHED
+            - IN_AIR
+          example: FINISHED
+        releaseAir:
+          type: integer
+          example: 2012
+        genres:
+          type: array
+          properties:
+            name:
+              type: string
+              example: Ação
+
+    WatchStatus:
+      type: string
+      enum:
+        - WATCHING
+        - TO_WATCH
+        - COMPLETED
+      example: WATCHING
+
+    UserAnime:
+      allOf:
+        - $ref: '#/components/schemas/Anime'
+        - type: object
+          properties:
+            userRating:
+              type: number
+              format: float
+            watchStatus:
+              $ref: '#/components/schemas/WatchStatus'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/PEDROHENRIQUEQLDEV/AniJourneyAPI/1.0.0
