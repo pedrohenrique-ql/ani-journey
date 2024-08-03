@@ -1,5 +1,7 @@
 ## AniJourney
 
+Veja a documentação completa da API no [SwaggerHub](https://app.swaggerhub.com/apis/PEDROHENRIQUEQLDEV/AniJourneyAPI/1.0.0-oas3.1).
+
 ### Sua Jornada no Mundo dos Animes
 
 O AniJourney é um site voltado para os amantes de animes, sendo possível explorar e explorar sua jornada pelo mundo dos animes.
