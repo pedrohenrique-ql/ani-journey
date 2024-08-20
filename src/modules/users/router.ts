@@ -4,6 +4,6 @@ import UserController from './UserController';
 const userRouter = Router();
 const userController = new UserController();
 
-userRouter.get('/users', userController.findById);
+userRouter.get('/users/:id', userController.getById);
 
 export default userRouter;
