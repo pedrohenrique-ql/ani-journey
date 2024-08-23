@@ -15,6 +15,8 @@ function errorHandler(error: Error, _request: Request, response: Response, _next
 
   if (error instanceof Error) {
     return response.status(500).json({ message: error.message });
+  } else {
+    return response.status(500).json({ message: 'Internal server error.' });
   }
 }
 
