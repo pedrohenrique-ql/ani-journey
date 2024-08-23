@@ -26,7 +26,7 @@ CREATE TABLE "UserAnime" (
 );
 
 -- CreateTable
-CREATE TABLE "UserAnimeRating" (
+CREATE TABLE "AnimeReview" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "animeId" TEXT NOT NULL,
@@ -34,16 +34,16 @@ CREATE TABLE "UserAnimeRating" (
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "UserAnimeRating_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AnimeReview_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "UserFavorite" (
+CREATE TABLE "FavoriteAnime" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "animeId" TEXT NOT NULL,
 
-    CONSTRAINT "UserFavorite_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "FavoriteAnime_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -56,7 +56,7 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 ALTER TABLE "UserAnime" ADD CONSTRAINT "UserAnime_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserAnimeRating" ADD CONSTRAINT "UserAnimeRating_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AnimeReview" ADD CONSTRAINT "AnimeReview_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "UserFavorite" ADD CONSTRAINT "UserFavorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "FavoriteAnime" ADD CONSTRAINT "FavoriteAnime_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

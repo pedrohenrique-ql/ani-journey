@@ -15,9 +15,9 @@ model User {
   role     Role   @default(NORMAL)
 
   UserAnime    UserAnime[]
-  UserFavorite UserFavorite[]
+  UserFavorite FavoriteAnime[]
 
-  UserAnimeRating UserAnimeRating[]
+  UserAnimeRating AnimeReview[]
 }
 
 model UserAnime {
@@ -29,7 +29,7 @@ model UserAnime {
   user User @relation(fields: [userId], references: [id])
 }
 
-model UserAnimeRating {
+model AnimeReview {
   id          String   @id
   userId      String
   animeId     String
@@ -40,7 +40,7 @@ model UserAnimeRating {
   user User @relation(fields: [userId], references: [id])
 }
 
-model UserFavorite {
+model FavoriteAnime {
   id      String @id
   userId  String
   animeId String
