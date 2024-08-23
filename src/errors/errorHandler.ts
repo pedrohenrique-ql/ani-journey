@@ -4,7 +4,7 @@ import { ZodError } from 'zod';
 
 function errorHandler(error: Error, _request: Request, response: Response, _next: NextFunction) {
   if (error instanceof ZodError) {
-    const httpError = new BadRequestError('Validation error');
+    const httpError = new BadRequestError('Validation error.');
 
     return response.status(httpError.status).json({ message: httpError.message });
   }
