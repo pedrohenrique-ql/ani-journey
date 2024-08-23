@@ -1,4 +1,4 @@
-import prisma from '@/database/client';
+import prisma from '@/database/prismaClient';
 import { GetUserByIdInput } from './validators/GetUserByIdValidator';
 import { BadRequestError, NotFoundError } from '@/errors/http';
 import { createId } from '@paralleldrive/cuid2';
