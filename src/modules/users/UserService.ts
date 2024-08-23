@@ -1,5 +1,5 @@
 import prisma from '@/database/prismaClient';
-import { GetUserByIdInput } from './validators/GetUserByIdValidator';
+import { GetUserInput } from './validators/GetUserValidator';
 import { BadRequestError, NotFoundError } from '@/errors/http';
 import { createId } from '@paralleldrive/cuid2';
 import { CreateUserInput } from './validators/CreateUserValidator';
@@ -36,7 +36,7 @@ class UserService {
     return createdUser;
   }
 
-  async getById(inputData: GetUserByIdInput) {
+  async getById(inputData: GetUserInput) {
     const user = await prisma.user.findFirst({
       where: { id: inputData.id },
     });
@@ -78,6 +78,12 @@ class UserService {
     });
 
     return updatedUser;
+  }
+
+  async delete(inputData: GetUserInput) {
+    await prisma.user.delete({
+      where: { id: inputData.id },
+    });
   }
 }
 
