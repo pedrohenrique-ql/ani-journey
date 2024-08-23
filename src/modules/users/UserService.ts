@@ -1,33 +1,88 @@
-import prisma from '@/database/client';
-import { User } from '@prisma/client';
+import prisma from '@/database/prismaClient';
+import { GetUserInput } from './validators/GetUserValidator';
+import { BadRequestError, NotFoundError } from '@/errors/http';
+import { createId } from '@paralleldrive/cuid2';
+import { CreateUserInput } from './validators/CreateUserValidator';
+import { hashPassword } from '@/utils/password';
+import { UpdateUserInput } from './validators/UpdateUserValidator';
 
 class UserService {
-  async getAll() {
-    return await prisma.user.findMany();
-  }
-
-  async findById(id: User['id']) {
-    return await prisma.user.findUnique({
-      where: { id },
+  async create(inputData: CreateUserInput) {
+    const existingUsername = await prisma.user.findUnique({
+      where: { username: inputData.username },
     });
-  }
 
-  async create(username: string, email: string, password: string) {
-    return await prisma.user.create({
-      data: { username, email, password },
+    if (existingUsername) {
+      throw new BadRequestError('Username is already in use.');
+    }
+
+    const existingUserEmail = await prisma.user.findUnique({
+      where: { email: inputData.email },
     });
-  }
 
-  async update(id: User['id'], username: string, email: string) {
-    return await prisma.user.update({
-      where: { id },
-      data: { username, email },
+    if (existingUserEmail) {
+      throw new BadRequestError('Email is already in use.');
+    }
+
+    const createdUser = await prisma.user.create({
+      data: {
+        id: createId(),
+        username: inputData.username,
+        email: inputData.email,
+        password: await hashPassword(inputData.password),
+      },
     });
+
+    return createdUser;
   }
 
-  async delete(id: User['id']) {
-    return await prisma.user.delete({
-      where: { id },
+  async getById(inputData: GetUserInput) {
+    const user = await prisma.user.findFirst({
+      where: { id: inputData.id },
+    });
+
+    if (!user) {
+      throw new NotFoundError(`User ${inputData.id} not found.`);
+    }
+
+    return user;
+  }
+
+  async update(inputData: UpdateUserInput) {
+    if (inputData.username) {
+      const existingUsername = await prisma.user.findUnique({
+        where: { username: inputData.username, NOT: { id: inputData.id } },
+      });
+
+      if (existingUsername) {
+        throw new BadRequestError('Username is already in use.');
+      }
+    }
+
+    if (inputData.email) {
+      const existingUserEmail = await prisma.user.findUnique({
+        where: { email: inputData.email, NOT: { id: inputData.id } },
+      });
+
+      if (existingUserEmail) {
+        throw new BadRequestError('Email is already in use.');
+      }
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: inputData.id },
+      data: {
+        username: inputData.username,
+        email: inputData.email,
+      },
+    });
+
+    return updatedUser;
+  }
+
+  async delete(inputData: GetUserInput) {
+    await prisma.user.delete({
+      where: { id: inputData.id },
     });
   }
 }
