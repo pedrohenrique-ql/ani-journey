@@ -3,8 +3,8 @@ import { GetUserInput } from './validators/GetUserValidator';
 import { BadRequestError, NotFoundError } from '@/errors/http';
 import { createId } from '@paralleldrive/cuid2';
 import { CreateUserInput } from './validators/CreateUserValidator';
-import { hashPassword } from '@/utils/password';
 import { UpdateUserInput } from './validators/UpdateUserValidator';
+import { hashPassword } from '@/utils/auth';
 
 class UserService {
   async create(inputData: CreateUserInput) {
