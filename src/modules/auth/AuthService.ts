@@ -2,7 +2,7 @@ import prisma from '@/database/prismaClient';
 import { LoginInput } from './validators/LoginValidator';
 import { UnauthorizedError } from '@/errors/http';
 import { AccessTokenPayload, createJWT, RefreshTokenPayload, verifyJWT, verifyPassword } from '@/utils/auth';
-import { User } from '@prisma/client';
+import { Session, User } from '@prisma/client';
 import { createId } from '@paralleldrive/cuid2';
 import { RefreshInput } from './validators/RefreshValidator';
 
@@ -24,39 +24,27 @@ class AuthService {
       throw new UnauthorizedError('Invalid credentials.');
     }
 
-    const userRefreshToken = await this.createRefreshToken(user.id);
+    await this.deleteExpiredSessions(user.id);
+    const userSession = await this.createSession(user.id);
 
-    const [accessToken, refreshToken] = await Promise.all([
-      createJWT<AccessTokenPayload>({ userId: user.id, role: user.role }, JWT_ACCESS_TOKEN_EXPIRATION),
-      createJWT<RefreshTokenPayload>(
-        { userId: user.id, refreshTokenId: userRefreshToken.id },
-        process.env.JWT_REFRESH_TOKEN_EXPIRATION ?? '',
-      ),
-    ]);
+    const accessToken = await createJWT<AccessTokenPayload>(
+      { userId: user.id, role: user.role, sessionId: userSession.id },
+      JWT_ACCESS_TOKEN_EXPIRATION,
+    );
+
+    const refreshToken = await createJWT<RefreshTokenPayload>(
+      { userId: user.id, sessionId: userSession.id },
+      process.env.JWT_REFRESH_TOKEN_EXPIRATION ?? '',
+    );
 
     return { accessToken, refreshToken };
   }
 
-  private async createRefreshToken(userId: User['id']) {
-    const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + parseInt(JWT_REFRESH_TOKEN_EXPIRATION));
-
-    const refreshToken = await prisma.refreshToken.create({
-      data: {
-        id: createId(),
-        userId,
-        expiresAt,
-      },
-    });
-
-    return refreshToken;
-  }
-
   async getRefreshToken(inputData: RefreshInput) {
-    const { refreshTokenId, userId } = await verifyJWT<RefreshTokenPayload>(inputData.refreshToken);
+    const { sessionId, userId } = await verifyJWT<RefreshTokenPayload>(inputData.refreshToken);
 
-    const refreshToken = await prisma.refreshToken.findUnique({
-      where: { id: refreshTokenId, userId, expiresAt: { gte: new Date() } },
+    const refreshToken = await prisma.session.findUnique({
+      where: { id: sessionId, userId, expiresAt: { gte: new Date() } },
     });
 
     if (!refreshToken) {
@@ -70,11 +58,39 @@ class AuthService {
     }
 
     const accessToken = await createJWT<AccessTokenPayload>(
-      { userId: user.id, role: user.role },
+      { userId: user.id, role: user.role, sessionId },
       JWT_ACCESS_TOKEN_EXPIRATION,
     );
 
     return { accessToken };
+  }
+
+  async logout(sessionId: Session['id']) {
+    await prisma.session.deleteMany({ where: { id: sessionId } });
+  }
+
+  private async createSession(userId: User['id']) {
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + parseInt(JWT_REFRESH_TOKEN_EXPIRATION));
+
+    const refreshToken = await prisma.session.create({
+      data: {
+        id: createId(),
+        userId,
+        expiresAt,
+      },
+    });
+
+    return refreshToken;
+  }
+
+  private async deleteExpiredSessions(userId: User['id']) {
+    await prisma.session.deleteMany({
+      where: {
+        userId,
+        expiresAt: { lt: new Date() },
+      },
+    });
   }
 }
 

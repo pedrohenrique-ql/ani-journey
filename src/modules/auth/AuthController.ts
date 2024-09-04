@@ -19,6 +19,13 @@ class AuthController {
 
     response.status(200).json({ accessToken });
   };
+
+  logout = async (request: Request, response: Response) => {
+    const { sessionId } = request.middlewares.authenticated;
+    await this.authService.logout(sessionId);
+
+    response.status(204).send();
+  };
 }
 
 export default AuthController;

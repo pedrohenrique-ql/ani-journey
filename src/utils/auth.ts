@@ -1,6 +1,6 @@
 import { EncryptJWT, base64url, JWTPayload, jwtDecrypt } from 'jose';
 import bcrypt from 'bcrypt';
-import { RefreshToken, Role, User } from '@prisma/client';
+import { Session, Role, User } from '@prisma/client';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? '';
 const DECODED_JWT_SECRET = base64url.decode(JWT_SECRET);
@@ -11,11 +11,12 @@ const JWT_AUDIENCE = 'ani-journey';
 export interface AccessTokenPayload extends JWTPayload {
   userId: User['id'];
   role: Role;
+  sessionId: Session['id'];
 }
 
 export interface RefreshTokenPayload extends JWTPayload {
   userId: User['id'];
-  refreshTokenId: RefreshToken['id'];
+  sessionId: Session['id'];
 }
 
 export async function hashPassword(password: string): Promise<string> {

@@ -1,5 +1,5 @@
 import { UnauthorizedError } from '@/errors/http';
-import { verifyJWT } from '@/utils/auth';
+import { AccessTokenPayload, verifyJWT } from '@/utils/auth';
 import { NextFunction, Request, Response } from 'express';
 
 async function ensureAuthenticated(request: Request, _response: Response, next: NextFunction) {
@@ -16,9 +16,9 @@ async function ensureAuthenticated(request: Request, _response: Response, next: 
   }
 
   try {
-    const { userId, role } = await verifyJWT(token);
+    const { userId, role, sessionId } = await verifyJWT<AccessTokenPayload>(token);
 
-    request.middlewares.authenticated = { userId, role };
+    request.middlewares.authenticated = { userId, role, sessionId };
   } catch (error) {
     throw new UnauthorizedError('Invalid token.');
   }
