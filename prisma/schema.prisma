@@ -17,7 +17,7 @@ model User {
   UserAnime       UserAnime[]
   UserFavorite    FavoriteAnime[]
   UserAnimeRating AnimeReview[]
-  RefreshToken    RefreshToken[]
+  Session         Session[]
 }
 
 model UserAnime {
@@ -48,7 +48,7 @@ model FavoriteAnime {
   user User @relation(fields: [userId], references: [id])
 }
 
-model RefreshToken {
+model Session {
   id        String   @id
   userId    String
   createdAt DateTime @default(now())
