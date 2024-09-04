@@ -40,7 +40,7 @@ class AuthService {
     return { accessToken, refreshToken };
   }
 
-  async getRefreshToken(inputData: RefreshInput) {
+  async refreshAccessToken(inputData: RefreshInput) {
     const { sessionId, userId } = await verifyJWT<RefreshTokenPayload>(inputData.refreshToken);
 
     const refreshToken = await prisma.session.findUnique({

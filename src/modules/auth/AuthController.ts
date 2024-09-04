@@ -13,9 +13,9 @@ class AuthController {
     response.status(200).json({ accessToken, refreshToken });
   };
 
-  getRefreshToken = async (request: Request, response: Response) => {
+  refresh = async (request: Request, response: Response) => {
     const validatedInput = refreshValidator.parse(request.body);
-    const { accessToken } = await this.authService.getRefreshToken(validatedInput);
+    const { accessToken } = await this.authService.refreshAccessToken(validatedInput);
 
     response.status(200).json({ accessToken });
   };
