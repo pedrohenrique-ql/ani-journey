@@ -1,9 +1,10 @@
 import prisma from '@/database/prismaClient';
 import { LoginInput } from './validators/LoginValidator';
 import { UnauthorizedError } from '@/errors/http';
-import { AccessTokenPayload, createJWT, RefreshTokenPayload, verifyPassword } from '@/utils/auth';
+import { AccessTokenPayload, createJWT, RefreshTokenPayload, verifyJWT, verifyPassword } from '@/utils/auth';
 import { User } from '@prisma/client';
 import { createId } from '@paralleldrive/cuid2';
+import { RefreshInput } from './validators/RefreshValidator';
 
 const JWT_ACCESS_TOKEN_EXPIRATION = process.env.JWT_ACCESS_TOKEN_EXPIRATION ?? '';
 const JWT_REFRESH_TOKEN_EXPIRATION = process.env.JWT_REFRESH_TOKEN_EXPIRATION ?? '';
@@ -49,6 +50,31 @@ class AuthService {
     });
 
     return refreshToken;
+  }
+
+  async getRefreshToken(inputData: RefreshInput) {
+    const { refreshTokenId, userId } = await verifyJWT<RefreshTokenPayload>(inputData.refreshToken);
+
+    const refreshToken = await prisma.refreshToken.findUnique({
+      where: { id: refreshTokenId, userId, expiresAt: { gte: new Date() } },
+    });
+
+    if (!refreshToken) {
+      throw new UnauthorizedError('Invalid refresh token.');
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      throw new UnauthorizedError('Invalid refresh token.');
+    }
+
+    const accessToken = await createJWT<AccessTokenPayload>(
+      { userId: user.id, role: user.role },
+      JWT_ACCESS_TOKEN_EXPIRATION,
+    );
+
+    return { accessToken };
   }
 }
 
