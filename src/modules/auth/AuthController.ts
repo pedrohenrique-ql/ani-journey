@@ -7,9 +7,9 @@ class AuthController {
 
   login = async (request: Request, response: Response) => {
     const validatedInput = loginValidator.parse(request.body);
-    const { accessToken } = await this.authService.login(validatedInput);
+    const { accessToken, refreshToken } = await this.authService.login(validatedInput);
 
-    response.status(200).json({ accessToken });
+    response.status(200).json({ accessToken, refreshToken });
   };
 }
 
