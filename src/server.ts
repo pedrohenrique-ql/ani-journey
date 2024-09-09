@@ -4,6 +4,7 @@ import path from 'path';
 import cors from 'cors';
 import userRouter from './modules/users/router';
 import errorHandler from './errors/errorHandler';
+import authRouter from './modules/auth/router';
 
 const HOST = process.env.HOST ?? '0.0.0.0';
 const PORT = Number(process.env.PORT ?? '8080');
@@ -17,6 +18,7 @@ app.get('/', (_req: Request, res: Response) => {
 });
 
 app.use(userRouter);
+app.use(authRouter);
 
 app.use(errorHandler);
 

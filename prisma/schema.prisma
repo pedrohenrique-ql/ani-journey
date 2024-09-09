@@ -14,10 +14,10 @@ model User {
   password String
   role     Role   @default(NORMAL)
 
-  UserAnime    UserAnime[]
-  UserFavorite FavoriteAnime[]
-
+  UserAnime       UserAnime[]
+  UserFavorite    FavoriteAnime[]
   UserAnimeRating AnimeReview[]
+  Session         Session[]
 }
 
 model UserAnime {
@@ -44,6 +44,15 @@ model FavoriteAnime {
   id      String @id
   userId  String
   animeId String
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
 
   user User @relation(fields: [userId], references: [id])
 }
