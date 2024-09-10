@@ -5,6 +5,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { CreateUserInput } from './validators/CreateUserValidator';
 import { UpdateUserInput } from './validators/UpdateUserValidator';
 import { hashPassword } from '@/utils/auth';
+import { EmailAlreadyInUseError, UsernameAlreadyInUseError } from './errors';
 
 class UserService {
   async create(inputData: CreateUserInput) {
@@ -13,7 +14,7 @@ class UserService {
     });
 
     if (existingUsername) {
-      throw new BadRequestError('Username is already in use.');
+      throw new UsernameAlreadyInUseError(inputData.username);
     }
 
     const existingUserEmail = await prisma.user.findUnique({
@@ -21,7 +22,7 @@ class UserService {
     });
 
     if (existingUserEmail) {
-      throw new BadRequestError('Email is already in use.');
+      throw new EmailAlreadyInUseError(inputData.email);
     }
 
     const createdUser = await prisma.user.create({
