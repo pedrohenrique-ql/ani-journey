@@ -33,25 +33,25 @@ class AuthService {
     );
 
     const refreshToken = await createJWT<RefreshTokenPayload>(
-      { userId: user.id, sessionId: userSession.id },
-      process.env.JWT_REFRESH_TOKEN_EXPIRATION ?? '',
+      { sessionId: userSession.id },
+      JWT_REFRESH_TOKEN_EXPIRATION,
     );
 
     return { accessToken, refreshToken };
   }
 
   async refreshAccessToken(inputData: RefreshInput) {
-    const { sessionId, userId } = await verifyJWT<RefreshTokenPayload>(inputData.refreshToken);
+    const { sessionId } = await verifyJWT<RefreshTokenPayload>(inputData.refreshToken);
 
-    const refreshToken = await prisma.session.findUnique({
-      where: { id: sessionId, userId, expiresAt: { gte: new Date() } },
+    const userSession = await prisma.session.findUnique({
+      where: { id: sessionId, expiresAt: { gte: new Date() } },
     });
 
-    if (!refreshToken) {
+    if (!userSession) {
       throw new UnauthorizedError('Invalid refresh token.');
     }
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await prisma.user.findUnique({ where: { id: userSession.userId } });
 
     if (!user) {
       throw new UnauthorizedError('Invalid refresh token.');
