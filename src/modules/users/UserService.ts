@@ -5,6 +5,7 @@ import { createId } from '@paralleldrive/cuid2';
 import { CreateUserInput } from './validators/CreateUserValidator';
 import { UpdateUserInput } from './validators/UpdateUserValidator';
 import { hashPassword } from '@/utils/auth';
+import { EmailAlreadyInUseError, UsernameAlreadyInUseError } from './errors';
 
 class UserService {
   async create(inputData: CreateUserInput) {
@@ -13,7 +14,7 @@ class UserService {
     });
 
     if (existingUsername) {
-      throw new BadRequestError('Username is already in use.');
+      throw new UsernameAlreadyInUseError(inputData.username);
     }
 
     const existingUserEmail = await prisma.user.findUnique({
@@ -21,7 +22,7 @@ class UserService {
     });
 
     if (existingUserEmail) {
-      throw new BadRequestError('Email is already in use.');
+      throw new EmailAlreadyInUseError(inputData.email);
     }
 
     const createdUser = await prisma.user.create({
@@ -55,7 +56,7 @@ class UserService {
       });
 
       if (existingUsername) {
-        throw new BadRequestError('Username is already in use.');
+        throw new BadRequestError(`Username ${inputData.username} is already in use.`);
       }
     }
 
@@ -65,12 +66,14 @@ class UserService {
       });
 
       if (existingUserEmail) {
-        throw new BadRequestError('Email is already in use.');
+        throw new BadRequestError(`Email ${inputData.email} is already in use.`);
       }
     }
 
+    const user = await this.getById({ id: inputData.id });
+
     const updatedUser = await prisma.user.update({
-      where: { id: inputData.id },
+      where: { id: user.id },
       data: {
         username: inputData.username,
         email: inputData.email,
@@ -81,8 +84,10 @@ class UserService {
   }
 
   async delete(inputData: GetUserInput) {
+    const user = await this.getById(inputData);
+
     await prisma.user.delete({
-      where: { id: inputData.id },
+      where: { id: user.id },
     });
   }
 }

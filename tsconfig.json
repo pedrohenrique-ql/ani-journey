@@ -9,9 +9,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./src/*"],
-      "@tests/*": ["./tests/*"],
-      "@@/*": ["./*"]
+      "@/*": ["src/*"],
+      "@tests/*": ["tests/*"],
+      "@@/package.json": ["package.json"]
     }
   },
   "include": ["./**/*.ts"],

@@ -18,7 +18,8 @@ async function ensureAuthenticated(request: Request, _response: Response, next: 
   try {
     const { userId, role, sessionId } = await verifyJWT<AccessTokenPayload>(token);
 
-    request.middlewares.authenticated = { userId, role, sessionId };
+    request.middlewares = { authenticated: { userId, role, sessionId } };
+    return next();
   } catch (error) {
     throw new UnauthorizedError('Invalid token.');
   }

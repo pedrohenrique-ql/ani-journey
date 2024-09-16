@@ -15,7 +15,6 @@ export interface AccessTokenPayload extends JWTPayload {
 }
 
 export interface RefreshTokenPayload extends JWTPayload {
-  userId: User['id'];
   sessionId: Session['id'];
 }
 
