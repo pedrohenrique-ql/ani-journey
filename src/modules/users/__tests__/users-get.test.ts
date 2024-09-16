@@ -9,7 +9,6 @@ describe('Users (Get)', async () => {
   const app = await createApp();
 
   beforeEach(async () => {
-    await prisma.session.deleteMany();
     await prisma.user.deleteMany();
   });
 
@@ -43,6 +42,7 @@ describe('Users (Get)', async () => {
     const { user } = await createAuthenticatedUser(app);
 
     const getUserResponse = await supertest(app).get(`/users/${user.id}`);
+
     expect(getUserResponse.status).toBe(401);
     expect(getUserResponse.body).toEqual({ message: 'Token not provided.' });
   });

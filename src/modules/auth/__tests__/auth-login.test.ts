@@ -10,7 +10,6 @@ describe('Auth (Login)', async () => {
   const app = await createApp();
 
   beforeEach(async () => {
-    await prisma.session.deleteMany();
     await prisma.user.deleteMany();
   });
 

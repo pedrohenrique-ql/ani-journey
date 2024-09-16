@@ -9,7 +9,7 @@ export default defineConfig({
     include: ['./{src,tests}/**/*.test.ts'],
     setupFiles: ['./tests/setup.ts'],
     minWorkers: 1,
-    maxWorkers: '50%',
+    maxWorkers: 1,
   },
   resolve: {
     alias: {
