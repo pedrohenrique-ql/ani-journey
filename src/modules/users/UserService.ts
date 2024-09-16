@@ -56,7 +56,7 @@ class UserService {
       });
 
       if (existingUsername) {
-        throw new BadRequestError('Username is already in use.');
+        throw new BadRequestError(`Username ${inputData.username} is already in use.`);
       }
     }
 
@@ -66,12 +66,14 @@ class UserService {
       });
 
       if (existingUserEmail) {
-        throw new BadRequestError('Email is already in use.');
+        throw new BadRequestError(`Email ${inputData.email} is already in use.`);
       }
     }
 
+    const user = await this.getById({ id: inputData.id });
+
     const updatedUser = await prisma.user.update({
-      where: { id: inputData.id },
+      where: { id: user.id },
       data: {
         username: inputData.username,
         email: inputData.email,
