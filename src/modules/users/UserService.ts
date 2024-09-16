@@ -82,8 +82,10 @@ class UserService {
   }
 
   async delete(inputData: GetUserInput) {
+    const user = await this.getById(inputData);
+
     await prisma.user.delete({
-      where: { id: inputData.id },
+      where: { id: user.id },
     });
   }
 }
