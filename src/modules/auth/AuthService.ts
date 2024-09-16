@@ -48,13 +48,13 @@ class AuthService {
     });
 
     if (!userSession) {
-      throw new UnauthorizedError('Invalid refresh token.');
+      throw new UnauthorizedError('Invalid credentials.');
     }
 
     const user = await prisma.user.findUnique({ where: { id: userSession.userId } });
 
     if (!user) {
-      throw new UnauthorizedError('Invalid refresh token.');
+      throw new UnauthorizedError('Invalid credentials.');
     }
 
     const accessToken = await createJWT<AccessTokenPayload>(
