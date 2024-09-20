@@ -24,3 +24,11 @@ export function toResponseAnimeList(animeList: AnimeList): SearchAnimeResponse {
     })),
   };
 }
+
+export function toResponseAnime(anime: Anime): AnimeResponse {
+  return {
+    ...anime,
+    rating: 0,
+    favorites: 0,
+  };
+}
