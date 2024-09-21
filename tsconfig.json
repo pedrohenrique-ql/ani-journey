@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["ES6"],
-    "module": "commonjs",
+    "target": "es2018",
+    "module": "CommonJS",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
+    "resolveJsonModule": true,
+
+    "lib": ["esnext", "webworker", "webworker.iterable"],
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
@@ -14,7 +16,7 @@
       "@@/package.json": ["package.json"]
     }
   },
-  "include": ["./**/*.ts"],
 
-  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
+  "include": ["./**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
