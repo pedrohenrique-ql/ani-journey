@@ -12,7 +12,7 @@ export interface SearchAnimeResponse {
   data: Anime[];
 }
 
-export function toResponseAnimeList(animeList: AnimeList): SearchAnimeResponse {
+export function toAnimeListResponse(animeList: AnimeList): SearchAnimeResponse {
   return {
     total: animeList.total,
     pageSize: animeList.pageSize,
@@ -25,7 +25,7 @@ export function toResponseAnimeList(animeList: AnimeList): SearchAnimeResponse {
   };
 }
 
-export function toResponseAnime(anime: Anime): AnimeResponse {
+export function toAnimeResponse(anime: Anime): AnimeResponse {
   return {
     ...anime,
     rating: 0,
