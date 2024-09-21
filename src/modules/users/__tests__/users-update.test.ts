@@ -167,4 +167,13 @@ describe('Users (Update)', async () => {
     expect(updateUserResponse.status).toBe(400);
     expect(updateUserResponse.body).toEqual({ message: 'Validation error.' });
   });
+
+  it('should return 401 if user is not authenticated', async () => {
+    const { user } = await createAuthenticatedUser(app);
+
+    const deleteUserResponse = await supertest(app).delete(`/users/${user.id}`);
+
+    expect(deleteUserResponse.status).toBe(401);
+    expect(deleteUserResponse.body).toEqual({ message: 'Token not provided.' });
+  });
 });
