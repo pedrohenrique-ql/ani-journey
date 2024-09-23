@@ -1,4 +1,4 @@
-import { SearchAnimeResponse } from '@/modules/anime/toResponse';
+import { AnimeResponse, SearchAnimeResponse } from '@/modules/anime/toResponse';
 import { JikanAnimeGetByIdResponse, JikanAnimeSearchResponse } from '@/types/jikan';
 
 export function createJikanAnimeSearchResponse(
@@ -36,17 +36,21 @@ export function toAnimeListResponse(jikanAnimeSearchResponse: JikanAnimeSearchRe
     total: pagination?.items?.total ?? 1,
     pageSize: pagination?.items?.per_page ?? data.length,
     page: pagination?.items?.per_page ?? 1,
-    data: data.map((anime) => ({
-      id: anime.mal_id ?? 1,
-      englishTitle: anime.title_english ?? '',
-      japaneseTitle: anime.title_japanese ?? '',
-      episodes: anime.episodes ?? 0,
-      synopsis: anime.synopsis ?? '',
-      image: anime.images?.jpg?.image_url ?? '',
-      status: anime.status ?? 'Finished Airing',
-      releaseAir: anime.year ?? 2013,
-      favorites: 0,
-      rating: 0,
-    })),
+    data: data.map((anime) => toAnimeResponse(anime)),
+  };
+}
+
+export function toAnimeResponse(jikanGetAnimeByIdResponse: JikanAnimeGetByIdResponse): AnimeResponse {
+  return {
+    id: jikanGetAnimeByIdResponse.mal_id ?? 1,
+    englishTitle: jikanGetAnimeByIdResponse.title_english ?? '',
+    japaneseTitle: jikanGetAnimeByIdResponse.title_japanese ?? '',
+    episodes: jikanGetAnimeByIdResponse.episodes ?? 0,
+    synopsis: jikanGetAnimeByIdResponse.synopsis ?? '',
+    image: jikanGetAnimeByIdResponse.images?.jpg?.image_url ?? '',
+    status: jikanGetAnimeByIdResponse.status ?? 'Finished Airing',
+    releaseAir: jikanGetAnimeByIdResponse.year ?? 2013,
+    favorites: 0,
+    rating: 0,
   };
 }
