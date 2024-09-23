@@ -26,8 +26,6 @@ describe('Anime (Search)', async () => {
   });
 
   it('should return a list of anime with pagination', async () => {
-    const { auth } = await createAuthenticatedUser(app);
-
     const jikanAnimes = Array.from({ length: 5 }, () => createJikanAnimeResponse());
     const jikanAnimeSearchResponse = createJikanAnimeSearchResponse({ data: jikanAnimes });
     const { pagination } = jikanAnimeSearchResponse;
@@ -40,13 +38,10 @@ describe('Anime (Search)', async () => {
         body: jikanAnimeSearchResponse,
       });
 
-    const searchAnimeResponse = await supertest(app)
-      .get('/anime')
-      .query({
-        page: 1,
-        pageSize: 5,
-      })
-      .auth(auth.accessToken, { type: 'bearer' });
+    const searchAnimeResponse = await supertest(app).get('/anime').query({
+      page: 1,
+      pageSize: 5,
+    });
 
     const expectedSearchAnimeResponse = toAnimeListResponse(jikanAnimeSearchResponse);
     expect(searchAnimeResponse.status).toBe(200);
@@ -57,8 +52,6 @@ describe('Anime (Search)', async () => {
   });
 
   it('should search anime by title', async () => {
-    const { auth } = await createAuthenticatedUser(app);
-
     const jikanAnimes = Array.from({ length: 5 }, () => createJikanAnimeResponse());
     const jikanAnimeSearchResponse = createJikanAnimeSearchResponse({ data: jikanAnimes });
     const { pagination } = jikanAnimeSearchResponse;
@@ -77,14 +70,11 @@ describe('Anime (Search)', async () => {
         body: jikanAnimeSearchResponse,
       });
 
-    const searchAnimeResponse = await supertest(app)
-      .get('/anime')
-      .query({
-        page: 1,
-        pageSize: 5,
-        title: 'Attack on Titan',
-      })
-      .auth(auth.accessToken, { type: 'bearer' });
+    const searchAnimeResponse = await supertest(app).get('/anime').query({
+      page: 1,
+      pageSize: 5,
+      title: 'Attack on Titan',
+    });
 
     const expectedSearchAnimeResponse = toAnimeListResponse(jikanAnimeSearchResponse);
     expect(searchAnimeResponse.status).toBe(200);
