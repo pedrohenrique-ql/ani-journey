@@ -18,7 +18,6 @@ class AnimeService {
     const anime = await this.animeClient.getAnimeById(inputData.id);
 
     if (!anime) {
-      console.log('oi');
       throw new AnimeNotFound(inputData.id);
     }
 

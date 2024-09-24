@@ -46,8 +46,6 @@ describe('Anime (Get by id)', async () => {
   //   });
 
   //   const getAnimeByIdResponse = await supertest(app).get(`/anime/${animeId}`);
-  //   console.log(getAnimeByIdResponse.body);
-  //   console.log(getAnimeByIdResponse.body);
   //   expect(getAnimeByIdResponse.status).toBe(404);
   //   expect(getAnimeByIdResponse.body).toEqual({ message: `Anime ${animeId} not found.` });
 
@@ -60,6 +58,6 @@ describe('Anime (Get by id)', async () => {
 
     const getAnimeByIdResponse = await supertest(app).get(`/anime/${animeId}`);
     expect(getAnimeByIdResponse.status).toBe(400);
-    expect(getAnimeByIdResponse.body).toEqual({ message: 'Invalid anime id.' });
+    expect(getAnimeByIdResponse.body).toEqual({ message: 'Validation error.' });
   });
 });
