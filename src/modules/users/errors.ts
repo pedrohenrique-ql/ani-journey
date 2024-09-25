@@ -1,4 +1,10 @@
-import { BadRequestError } from '@/errors/http';
+import { BadRequestError, NotFoundError } from '@/errors/http';
+
+export class UserNotFound extends NotFoundError {
+  constructor(userId: string) {
+    super(`User ${userId} not found.`);
+  }
+}
 
 export class EmailAlreadyInUseError extends BadRequestError {
   constructor(email: string) {

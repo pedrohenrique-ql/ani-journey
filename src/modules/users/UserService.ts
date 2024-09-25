@@ -1,11 +1,11 @@
 import prisma from '@/database/prismaClient';
 import { GetUserInput } from './validators/GetUserValidator';
-import { BadRequestError, NotFoundError } from '@/errors/http';
+import { BadRequestError } from '@/errors/http';
 import { createId } from '@paralleldrive/cuid2';
 import { CreateUserInput } from './validators/CreateUserValidator';
 import { UpdateUserInput } from './validators/UpdateUserValidator';
 import { hashPassword } from '@/utils/auth';
-import { EmailAlreadyInUseError, UsernameAlreadyInUseError } from './errors';
+import { EmailAlreadyInUseError, UsernameAlreadyInUseError, UserNotFound } from './errors';
 
 class UserService {
   async create(inputData: CreateUserInput) {
@@ -38,12 +38,10 @@ class UserService {
   }
 
   async getById(inputData: GetUserInput) {
-    const user = await prisma.user.findFirst({
-      where: { id: inputData.id },
-    });
+    const user = await prisma.user.findFirst({ where: { id: inputData.id } });
 
     if (!user) {
-      throw new NotFoundError(`User ${inputData.id} not found.`);
+      throw new UserNotFound(inputData.id);
     }
 
     return user;
