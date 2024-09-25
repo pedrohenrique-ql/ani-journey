@@ -1,6 +1,5 @@
 import createApp from '@/server/app';
 import { jikanInterceptor } from '@tests/mocks/jikanInterceptor';
-import { createAuthenticatedUser } from '@tests/utils/auth';
 import { createJikanAnimeResponse, toAnimeResponse } from '@tests/utils/anime';
 import supertest from 'supertest';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';

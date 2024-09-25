@@ -1,20 +1,14 @@
 import createApp from '@/server/app';
 import { jikanInterceptor } from '@tests/mocks/jikanInterceptor';
-import { createAuthenticatedUser } from '@tests/utils/auth';
 import { createJikanAnimeResponse, createJikanAnimeSearchResponse, toAnimeListResponse } from '@tests/utils/anime';
 import supertest from 'supertest';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import prisma from '@/database/prismaClient';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 describe('Anime (Search)', async () => {
   const app = await createApp();
 
   beforeAll(async () => {
     await jikanInterceptor.start();
-  });
-
-  beforeEach(async () => {
-    await prisma.user.deleteMany();
   });
 
   afterEach(() => {
