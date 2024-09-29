@@ -4,6 +4,7 @@ import { AnimeAlreadyInUserList } from './errors';
 import { createId } from '@paralleldrive/cuid2';
 import AnimeService from '@/modules/anime/AnimeService';
 import UserService from '../UserService';
+import { GetUserAnimeListInput } from './validators/getUserAnimeListValidator';
 
 class UserAnimeListService {
   private userService = new UserService();
@@ -26,6 +27,20 @@ class UserAnimeListService {
     });
 
     return createdData;
+  }
+
+  async getAll(inputData: GetUserAnimeListInput) {
+    const userAnimeList = await prisma.userAnimeList.findMany({
+      where: { userId: inputData.userId },
+      orderBy: { createdAt: 'desc' },
+      skip: inputData.page * inputData.pageSize,
+      take: inputData.pageSize,
+    });
+
+    const animeIds = userAnimeList.map((userAnime) => userAnime.animeId);
+    const animeList = await this.animeService.getByIdsInBatches(animeIds, { batchSize: 10 });
+
+    return { userAnimeList, animeList };
   }
 }
 
