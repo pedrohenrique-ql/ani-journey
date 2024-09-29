@@ -33,13 +33,8 @@ class JikanClient implements AnimeClient {
     };
   }
 
-  async getAnimeById(id: number): Promise<Anime | null> {
+  async getAnimeById(id: number): Promise<Anime> {
     const jikanAnime = await this.animeClient.getAnimeById(id);
-
-    if (jikanAnime.hasOwnProperty('error')) {
-      return null;
-    }
-
     const { data: anime } = jikanAnime;
 
     return {

@@ -62,7 +62,26 @@ describe('User Anime List (Add)', async () => {
     expect(addAnimeInUserListResponse.body).toEqual({ message: `User ${nonExistingUserId} not found.` });
   });
 
-  it('should return 404 when anime is not found', async () => {});
+  it('should return 404 when anime is not found', async () => {
+    const { auth, user } = await createAuthenticatedUser(app);
+
+    const animeId = 390480;
+
+    const animeByIdHandler = jikanInterceptor.get(`/anime/${animeId}`).respond({
+      status: 400,
+    });
+
+    const addAnimeInUserListResponse = await supertest(app)
+      .post(`/users/${user.id}/anime-list`)
+      .send({ animeId: animeId })
+      .auth(auth.accessToken, { type: 'bearer' });
+
+    expect(addAnimeInUserListResponse.status).toBe(404);
+    expect(addAnimeInUserListResponse.body).toEqual({ message: `Anime ${animeId} not found.` });
+
+    const requests = animeByIdHandler.requests();
+    expect(requests).toHaveLength(1);
+  });
 
   it('should return 400 when anime is already in user list', async () => {
     const { auth, user } = await createAuthenticatedUser(app);
