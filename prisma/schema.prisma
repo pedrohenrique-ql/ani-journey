@@ -16,38 +16,57 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  UserAnime       UserAnime[]
+  UserAnime       UserAnimeList[]
   UserFavorite    FavoriteAnime[]
+  UserAnimeStatus UserAnimeStatus[]
   UserAnimeRating AnimeReview[]
   Session         Session[]
 }
 
-model UserAnime {
+model UserAnimeList {
+  id        String   @id
+  userId    String
+  animeId   Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, animeId])
+}
+
+model UserAnimeStatus {
   id      String      @id
   userId  String
-  animeId String
+  animeId Int
   status  WatchStatus
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, animeId])
 }
 
 model AnimeReview {
   id          String   @id
   userId      String
-  animeId     String
+  animeId     Int
   rating      Int
   description String?
   createdAt   DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, animeId])
 }
 
 model FavoriteAnime {
   id      String @id
   userId  String
-  animeId String
+  animeId Int
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, animeId])
 }
 
 model Session {

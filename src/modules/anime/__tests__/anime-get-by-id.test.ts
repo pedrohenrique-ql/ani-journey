@@ -1,6 +1,5 @@
 import createApp from '@/server/app';
 import { jikanInterceptor } from '@tests/mocks/jikanInterceptor';
-import { createAuthenticatedUser } from '@tests/utils/auth';
 import { createJikanAnimeResponse, toAnimeResponse } from '@tests/utils/anime';
 import supertest from 'supertest';
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
@@ -38,20 +37,20 @@ describe('Anime (Get by id)', async () => {
     expect(requests).toHaveLength(1);
   });
 
-  // it('should return 404 when anime is not found', async () => {
-  //   const animeId = 390480;
+  it('should return 404 when anime is not found', async () => {
+    const animeId = 390480;
 
-  //   const animeByIdHandler = jikanInterceptor.get(`/anime/${animeId}`).respond({
-  //     status: 400,
-  //   });
+    const animeByIdHandler = jikanInterceptor.get(`/anime/${animeId}`).respond({
+      status: 400,
+    });
 
-  //   const getAnimeByIdResponse = await supertest(app).get(`/anime/${animeId}`);
-  //   expect(getAnimeByIdResponse.status).toBe(404);
-  //   expect(getAnimeByIdResponse.body).toEqual({ message: `Anime ${animeId} not found.` });
+    const getAnimeByIdResponse = await supertest(app).get(`/anime/${animeId}`);
+    expect(getAnimeByIdResponse.status).toBe(404);
+    expect(getAnimeByIdResponse.body).toEqual({ message: `Anime ${animeId} not found.` });
 
-  //   const requests = animeByIdHandler.requests();
-  //   expect(requests).toHaveLength(1);
-  // });
+    const requests = animeByIdHandler.requests();
+    expect(requests).toHaveLength(1);
+  });
 
   it('should return 400 when anime id is invalid', async () => {
     const animeId = 'invalid-id';
