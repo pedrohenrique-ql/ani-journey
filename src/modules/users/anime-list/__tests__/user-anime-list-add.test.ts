@@ -1,21 +1,22 @@
-import createApp from '../../../../server/app';
-import { jikanInterceptor } from '../../../../../tests/mocks/jikanInterceptor';
-import { createJikanAnimeResponse } from '../../../../../tests/utils/anime';
-import { createAuthenticatedUser } from '../../../../../tests/utils/auth';
+import createApp from '@/server/app';
+import { jikanInterceptor } from '@tests/mocks/jikanInterceptor';
+import { createJikanAnimeResponse } from '@tests/utils/anime';
+import { createAuthenticatedUser } from '@tests/utils/auth';
 import supertest from 'supertest';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import prisma from '../../../../database/prismaClient';
+import prisma from '@/database/prismaClient';
 import { createId } from '@paralleldrive/cuid2';
 
 describe('User Anime List (Add)', async () => {
   const app = await createApp();
+  const { auth, user } = await createAuthenticatedUser(app);
 
   beforeAll(async () => {
     await jikanInterceptor.start();
   });
 
   beforeEach(async () => {
-    await prisma.user.deleteMany();
+    await prisma.userAnimeList.deleteMany();
   });
 
   afterEach(() => {
@@ -27,8 +28,6 @@ describe('User Anime List (Add)', async () => {
   });
 
   it('should add an anime in user list', async () => {
-    const { auth, user } = await createAuthenticatedUser(app);
-
     const jikanAnimeGetByIdResponse = createJikanAnimeResponse();
     const animeByIdHandler = jikanInterceptor.get(`/anime/${jikanAnimeGetByIdResponse.mal_id}`).respond({
       status: 200,
@@ -50,8 +49,6 @@ describe('User Anime List (Add)', async () => {
   });
 
   it('should return 404 when user is not found', async () => {
-    const { auth } = await createAuthenticatedUser(app);
-
     const nonExistingUserId = createId();
     const addAnimeInUserListResponse = await supertest(app)
       .post(`/users/${nonExistingUserId}/anime-list`)
@@ -63,8 +60,6 @@ describe('User Anime List (Add)', async () => {
   });
 
   it('should return 404 when anime is not found', async () => {
-    const { auth, user } = await createAuthenticatedUser(app);
-
     const animeId = 390480;
 
     const animeByIdHandler = jikanInterceptor.get(`/anime/${animeId}`).respond({
@@ -84,14 +79,13 @@ describe('User Anime List (Add)', async () => {
   });
 
   it('should return 400 when anime is already in user list', async () => {
-    const { auth, user } = await createAuthenticatedUser(app);
-
     const animeId = 1;
 
     let addAnimeInUserListResponse = await supertest(app)
       .post(`/users/${user.id}/anime-list`)
       .send({ animeId: animeId })
       .auth(auth.accessToken, { type: 'bearer' });
+
     expect(addAnimeInUserListResponse.status).toBe(201);
 
     addAnimeInUserListResponse = await supertest(app)

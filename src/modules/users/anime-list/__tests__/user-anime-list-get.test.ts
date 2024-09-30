@@ -1,21 +1,22 @@
-import createApp from '../../../../server/app';
-import { jikanInterceptor } from '../../../../../tests/mocks/jikanInterceptor';
-import { createJikanAnimeResponse, toAnimeResponse } from '../../../../../tests/utils/anime';
-import { createAuthenticatedUser } from '../../../../../tests/utils/auth';
+import createApp from '@/server/app';
+import { jikanInterceptor } from '@tests/mocks/jikanInterceptor';
+import { createJikanAnimeResponse, toAnimeResponse } from '@tests/utils/anime';
+import { createAuthenticatedUser } from '@tests/utils/auth';
 import supertest from 'supertest';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import prisma from '../../../../database/prismaClient';
+import prisma from '@/database/prismaClient';
 import { createId } from '@paralleldrive/cuid2';
 
 describe('User Anime List (Get)', async () => {
   const app = await createApp();
+  const { auth, user } = await createAuthenticatedUser(app);
 
   beforeAll(async () => {
     await jikanInterceptor.start();
   });
 
   beforeEach(async () => {
-    await prisma.user.deleteMany();
+    await prisma.userAnimeList.deleteMany();
   });
 
   afterEach(() => {
@@ -27,8 +28,6 @@ describe('User Anime List (Get)', async () => {
   });
 
   it('should return user anime list with pagination', async () => {
-    const { auth, user } = await createAuthenticatedUser(app);
-
     const userAnimeList = await prisma.userAnimeList.createMany({
       data: Array.from({ length: 2 }, (_, index) => {
         const createdAt = new Date();
@@ -103,8 +102,6 @@ describe('User Anime List (Get)', async () => {
   });
 
   it('should return 404 when user is not found', async () => {
-    const { auth } = await createAuthenticatedUser(app);
-
     const nonExistingUserId = createId();
     const getUserAnimeListResponse = await supertest(app)
       .get(`/users/${nonExistingUserId}/anime-list`)
