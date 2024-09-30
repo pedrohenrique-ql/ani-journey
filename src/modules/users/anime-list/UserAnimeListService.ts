@@ -30,17 +30,21 @@ class UserAnimeListService {
   }
 
   async getAll(inputData: GetUserAnimeListInput) {
+    const user = await this.userService.getById({ id: inputData.userId });
+
     const userAnimeList = await prisma.userAnimeList.findMany({
-      where: { userId: inputData.userId },
+      where: { userId: user.id },
       orderBy: { createdAt: 'desc' },
-      skip: inputData.page * inputData.pageSize,
+      skip: (inputData.page - 1) * inputData.pageSize,
       take: inputData.pageSize,
     });
+
+    const total = await prisma.userAnimeList.count({ where: { userId: inputData.userId } });
 
     const animeIds = userAnimeList.map((userAnime) => userAnime.animeId);
     const animeList = await this.animeService.getByIdsInBatches(animeIds, { batchSize: 10 });
 
-    return { userAnimeList, animeList };
+    return { userAnimeList, animeList, total };
   }
 }
 

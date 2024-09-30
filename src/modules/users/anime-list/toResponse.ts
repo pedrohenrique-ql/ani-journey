@@ -1,14 +1,14 @@
 import { Anime } from '@/clients/anime/types';
 import { toAnimeResponse } from '@/modules/anime/toResponse';
-import { UserAnimeList } from '@prisma/client';
+import { User } from '@prisma/client';
 
 export function toUserAnimeListResponse(
-  userAnimeListId: UserAnimeList['id'],
+  userId: User['id'],
   animeList: Anime[],
   pagination: { page: number; total: number },
 ) {
   return {
-    id: userAnimeListId,
+    userId,
     total: pagination.total,
     page: pagination.page,
     data: animeList.map((anime) => toAnimeResponse(anime)),

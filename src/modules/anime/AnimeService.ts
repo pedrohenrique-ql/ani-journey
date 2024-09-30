@@ -33,9 +33,7 @@ class AnimeService {
 
     for (let i = 0; i < animeIds.length; i += batchSize) {
       const batch = animeIds.slice(i, i + batchSize);
-      const batchResults = await Promise.all(
-        batch.map((id) => fetch(`https://api.exemplo.com/endpoint/${id}`).then((response) => response.json())),
-      );
+      const batchResults = await Promise.all(batch.map((id) => this.getById({ id })));
 
       results.push(...batchResults);
     }
