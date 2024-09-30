@@ -6,6 +6,7 @@ import authRouter from '@/modules/auth/router';
 import errorHandler from '@/errors/errorHandler';
 import animeRouter from '@/modules/anime/router';
 import userAnimeListRouter from '@/modules/users/anime-list/router';
+import userAnimeStatusRouter from '@/modules/users/anime-status/router';
 
 async function createApp() {
   const app = express();
@@ -20,6 +21,7 @@ async function createApp() {
   app.use(authRouter);
   app.use(animeRouter);
   app.use(userAnimeListRouter);
+  app.use(userAnimeStatusRouter);
 
   app.use(errorHandler);
 
