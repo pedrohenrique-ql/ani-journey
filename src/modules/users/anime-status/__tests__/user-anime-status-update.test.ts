@@ -91,4 +91,15 @@ describe('User Anime Status (Update)', async () => {
     });
     expect(userAnimeStatus).toHaveLength(0);
   });
+
+  it('should return 401 when user is not authenticated', async () => {
+    const animeId = 1;
+
+    const updateUserAnimeStatusResponse = await supertest(app)
+      .put(`/users/${user.id}/anime/${animeId}/status`)
+      .send({ status: WatchStatus.WATCHING });
+
+    expect(updateUserAnimeStatusResponse.status).toBe(401);
+    expect(updateUserAnimeStatusResponse.body).toEqual({ message: 'Token not provided.' });
+  });
 });
