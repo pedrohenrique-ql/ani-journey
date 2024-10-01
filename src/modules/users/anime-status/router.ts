@@ -11,4 +11,6 @@ userAnimeStatusRouter.put(
   userAnimeStatusController.update,
 );
 
+userAnimeStatusRouter.get('/users/:userId/anime/:animeId/status', ensureAuthenticated, userAnimeStatusController.get);
+
 export default userAnimeStatusRouter;

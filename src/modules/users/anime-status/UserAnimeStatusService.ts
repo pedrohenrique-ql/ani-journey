@@ -2,6 +2,8 @@ import prisma from '@/database/prismaClient';
 import { UpdateUserAnimeStatusInput } from './validators/updateUserAnimeStatusValidator';
 import { createId } from '@paralleldrive/cuid2';
 import UserService from '../UserService';
+import { GetUserAnimeStatusInput } from './validators/getUserAnimeStatusValidator';
+import { UserAnimeStatusNotFound } from './errors';
 
 class UserAnimeStatusService {
   private userService = new UserService();
@@ -37,6 +39,23 @@ class UserAnimeStatusService {
     }
 
     return { userId: user.id, animeId: inputData.animeId, status: inputData.status };
+  }
+
+  async getByUserIdAndAnimeId(inputData: GetUserAnimeStatusInput) {
+    const userAnimeStatus = await prisma.userAnimeStatus.findUnique({
+      where: {
+        userId_animeId: {
+          userId: inputData.userId,
+          animeId: inputData.animeId,
+        },
+      },
+    });
+
+    if (!userAnimeStatus) {
+      throw new UserAnimeStatusNotFound(inputData.userId, inputData.animeId);
+    }
+
+    return userAnimeStatus;
   }
 }
 
