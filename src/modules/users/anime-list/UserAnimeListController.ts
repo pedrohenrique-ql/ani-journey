@@ -1,6 +1,6 @@
 import UserAnimeListService from './UserAnimeListService';
 import { Request, Response } from 'express';
-import { addAnimeToUserListValidator } from './validators/addAnimeToListValidator';
+import { addAnimeToUserListValidator } from './validators/addAnimeToUserListValidator';
 import { getUserAnimeListValidator } from './validators/getUserAnimeListValidator';
 import { toUserAnimeListResponse } from './toResponse';
 
@@ -23,6 +23,13 @@ class UserAnimeListController {
       total,
     });
     response.status(200).json(userAnimeListResponse);
+  };
+
+  remove = async (request: Request, response: Response) => {
+    const validatedInput = addAnimeToUserListValidator.parse({ ...request.params, ...request.body });
+    await this.userAnimeListService.remove(validatedInput);
+
+    response.status(204).send();
   };
 }
 
