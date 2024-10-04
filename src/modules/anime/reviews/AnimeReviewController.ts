@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import AnimeReviewService from './AnimeReviewService';
 import { createAnimeReviewValidator } from './validators/createAnimeReviewValidator';
-import { toAnimeReviewResponse } from './toResponse';
+import { toAnimeReviewListResponse, toAnimeReviewResponse } from './toResponse';
 import { getAnimeReviewsValidator } from './validators/getAnimeReviewsValidator';
 
 class AnimeReviewController {
@@ -17,13 +17,13 @@ class AnimeReviewController {
     response.status(201).json(animeReviewResponse);
   };
 
-  // get = async (request: Request, response: Response) => {
-  //   const validatedInput = getAnimeReviewsValidator.parse(request.query);
-  //   const animeReviews = await this.animeReviewService.get(validatedInput);
+  get = async (request: Request, response: Response) => {
+    const validatedInput = getAnimeReviewsValidator.parse({ ...request.query, ...request.params });
+    const { animeReviews, total } = await this.animeReviewService.get(validatedInput);
 
-  //   const animeReviewsResponse = animeReviews.map(toAnimeReviewResponse);
-  //   response.status(200).json(animeReviewsResponse);
-  // };
+    const animeReviewsResponse = toAnimeReviewListResponse(animeReviews, total);
+    response.status(200).json(animeReviewsResponse);
+  };
 }
 
 export default AnimeReviewController;

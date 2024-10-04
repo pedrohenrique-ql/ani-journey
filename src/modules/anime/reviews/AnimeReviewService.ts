@@ -33,19 +33,21 @@ class AnimeReviewService {
     return review;
   }
 
-  // async get(inputData: GetAnimeReviewsInput) {
-  //   const animeReviews = await prisma.animeReview.findMany({
-  //     where: {
-  //       animeId: inputData.animeId,
-  //     },
-  //     include: { user: true },
-  //     orderBy: { rating: 'desc' },
-  //     skip: (inputData.page - 1) * inputData.pageSize,
-  //     take: inputData.pageSize,
-  //   });
+  async get(inputData: GetAnimeReviewsInput) {
+    const animeReviews = await prisma.animeReview.findMany({
+      where: {
+        animeId: inputData.animeId,
+      },
+      include: { user: true },
+      orderBy: [{ rating: 'desc' }, { createdAt: 'desc' }],
+      skip: (inputData.page - 1) * inputData.pageSize,
+      take: inputData.pageSize,
+    });
 
-  //   return animeReviews;
-  // }
+    const total = await prisma.animeReview.count({ where: { animeId: inputData.animeId } });
+
+    return { animeReviews, total };
+  }
 }
 
 export default AnimeReviewService;
