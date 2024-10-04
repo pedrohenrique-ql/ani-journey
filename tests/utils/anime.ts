@@ -34,8 +34,6 @@ export function toAnimeListResponse(jikanAnimeSearchResponse: JikanAnimeSearchRe
   const { data = [], pagination } = jikanAnimeSearchResponse;
   return {
     total: pagination?.items?.total ?? 1,
-    pageSize: pagination?.items?.per_page ?? data.length,
-    page: pagination?.items?.per_page ?? 1,
     data: data.map((anime) => toAnimeResponse(anime)),
   };
 }

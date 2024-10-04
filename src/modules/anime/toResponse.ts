@@ -7,16 +7,12 @@ export interface AnimeResponse extends Anime {
 
 export interface SearchAnimeResponse {
   total: number;
-  pageSize: number;
-  page: number;
   data: Anime[];
 }
 
 export function toAnimeListResponse(animeList: AnimeList): SearchAnimeResponse {
   return {
     total: animeList.total,
-    pageSize: animeList.pageSize,
-    page: animeList.page,
     data: animeList.data.map((anime) => ({
       ...anime,
       rating: 0,
