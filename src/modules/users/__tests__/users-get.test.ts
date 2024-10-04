@@ -23,6 +23,7 @@ describe('Users (Get)', async () => {
       email: user.email,
       username: user.username,
       role: user.role,
+      createdAt: user.createdAt.toISOString(),
     });
   });
 

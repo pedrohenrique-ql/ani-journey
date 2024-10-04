@@ -29,6 +29,7 @@ describe('Users (Update)', async () => {
       username: 'new-username',
       email: 'new_email@email.com',
       role: user.role,
+      createdAt: user.createdAt.toISOString(),
     });
 
     const updatedUser = await prisma.user.findUnique({ where: { id: user.id } });
@@ -56,6 +57,7 @@ describe('Users (Update)', async () => {
       username: 'new-username',
       email: user.email,
       role: user.role,
+      createdAt: user.createdAt.toISOString(),
     });
 
     const updatedUser = await prisma.user.findUnique({ where: { id: user.id } });
@@ -82,6 +84,7 @@ describe('Users (Update)', async () => {
       username: user.username,
       email: 'new_email@email.com',
       role: user.role,
+      createdAt: user.createdAt.toISOString(),
     });
 
     const updatedUser = await prisma.user.findUnique({ where: { id: user.id } });
