@@ -7,7 +7,7 @@ import supertest from 'supertest';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { AnimeReviewResponse } from '../toResponse';
 
-describe('Anime Review (Get by id)', async () => {
+describe('Anime Reviews (Create)', async () => {
   const app = await createApp();
   const { auth, user } = await createAuthenticatedUser(app);
 
