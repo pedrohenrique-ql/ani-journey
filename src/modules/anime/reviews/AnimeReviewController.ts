@@ -3,6 +3,7 @@ import AnimeReviewService from './AnimeReviewService';
 import { createAnimeReviewValidator } from './validators/createAnimeReviewValidator';
 import { toAnimeReviewListResponse, toAnimeReviewResponse } from './toResponse';
 import { getAnimeReviewsValidator } from './validators/getAnimeReviewsValidator';
+import { updateAnimeReviewValidator } from './validators/updateAnimeReviewValidator';
 
 class AnimeReviewController {
   private animeReviewService = new AnimeReviewService();
@@ -23,6 +24,16 @@ class AnimeReviewController {
 
     const animeReviewsResponse = toAnimeReviewListResponse(animeReviews, total);
     response.status(200).json(animeReviewsResponse);
+  };
+
+  update = async (request: Request, response: Response) => {
+    const { userId } = request.middlewares.authenticated;
+
+    const validatedInput = updateAnimeReviewValidator.parse({ ...request.body, ...request.params });
+    const animeReview = await this.animeReviewService.update({ ...validatedInput, userId });
+
+    const animeReviewResponse = toAnimeReviewResponse(animeReview);
+    response.status(200).json(animeReviewResponse);
   };
 }
 

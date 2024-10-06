@@ -5,6 +5,8 @@ import { CreateAnimeReviewInput } from './validators/createAnimeReviewValidator'
 import { createId } from '@paralleldrive/cuid2';
 import { User, AnimeReview } from '@prisma/client';
 import { GetAnimeReviewsInput } from './validators/getAnimeReviewsValidator';
+import { UpdateAnimeReviewInput } from './validators/updateAnimeReviewValidator';
+import { AnimeReviewNotFoundError, AnimeReviewNotOwnedError } from './errors';
 
 export interface AnimeReviewWithUser extends AnimeReview {
   user: User;
@@ -47,6 +49,34 @@ class AnimeReviewService {
     const total = await prisma.animeReview.count({ where: { animeId: inputData.animeId } });
 
     return { animeReviews, total };
+  }
+
+  async update(inputData: UpdateAnimeReviewInput & { userId: User['id'] }) {
+    const review = await prisma.animeReview.findUnique({
+      where: {
+        id: inputData.reviewId,
+      },
+    });
+
+    if (!review) {
+      throw new AnimeReviewNotFoundError(inputData.reviewId);
+    }
+
+    if (review.userId !== inputData.userId) {
+      throw new AnimeReviewNotOwnedError(inputData.reviewId);
+    }
+
+    const updatedReview = await prisma.animeReview.update({
+      where: {
+        id: inputData.reviewId,
+      },
+      data: {
+        text: inputData.text,
+        rating: inputData.rating,
+      },
+    });
+
+    return updatedReview;
   }
 }
 

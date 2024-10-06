@@ -16,10 +16,8 @@ export async function createUser(partialUser: Partial<CreateUserInput> = {}) {
     ...restPartialUser,
   };
 
-  const createdUser = await prisma.user.upsert({
-    where: { username: 'user', email: 'email@test.com' },
-    update: data,
-    create: data,
+  const createdUser = await prisma.user.create({
+    data,
   });
 
   return { user: createdUser, password: userPassword };
