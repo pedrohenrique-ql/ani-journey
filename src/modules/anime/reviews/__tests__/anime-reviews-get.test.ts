@@ -1,8 +1,5 @@
 import prisma from '@/database/prismaClient';
 import createApp from '@/server/app';
-import { jikanInterceptor } from '@tests/mocks/jikanInterceptor';
-import { createJikanAnimeResponse } from '@tests/utils/anime';
-import { createAuthenticatedUser } from '@tests/utils/auth';
 import supertest from 'supertest';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { AnimeReviewListResponse, AnimeReviewResponse, toAnimeReviewResponse } from '../toResponse';
