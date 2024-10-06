@@ -7,6 +7,7 @@ import { User, AnimeReview } from '@prisma/client';
 import { GetAnimeReviewsInput } from './validators/getAnimeReviewsValidator';
 import { UpdateAnimeReviewInput } from './validators/updateAnimeReviewValidator';
 import { AnimeReviewNotFoundError, AnimeReviewNotOwnedError } from './errors';
+import { DeleteAnimeReviewInput } from './validators/deleteAnimeReviewValidator';
 
 export interface AnimeReviewWithUser extends AnimeReview {
   user: User;
@@ -51,7 +52,7 @@ class AnimeReviewService {
     return { animeReviews, total };
   }
 
-  async update(inputData: UpdateAnimeReviewInput & { userId: User['id'] }) {
+  async update(inputData: UpdateAnimeReviewInput) {
     const review = await prisma.animeReview.findUnique({
       where: {
         id: inputData.reviewId,
@@ -77,6 +78,28 @@ class AnimeReviewService {
     });
 
     return updatedReview;
+  }
+
+  async delete(inputData: DeleteAnimeReviewInput) {
+    const review = await prisma.animeReview.findUnique({
+      where: {
+        id: inputData.reviewId,
+      },
+    });
+
+    if (!review) {
+      throw new AnimeReviewNotFoundError(inputData.reviewId);
+    }
+
+    if (review.userId !== inputData.userId) {
+      throw new AnimeReviewNotOwnedError(inputData.reviewId);
+    }
+
+    await prisma.animeReview.delete({
+      where: {
+        id: inputData.reviewId,
+      },
+    });
   }
 }
 

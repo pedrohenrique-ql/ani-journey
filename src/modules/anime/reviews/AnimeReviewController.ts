@@ -4,6 +4,7 @@ import { createAnimeReviewValidator } from './validators/createAnimeReviewValida
 import { toAnimeReviewListResponse, toAnimeReviewResponse } from './toResponse';
 import { getAnimeReviewsValidator } from './validators/getAnimeReviewsValidator';
 import { updateAnimeReviewValidator } from './validators/updateAnimeReviewValidator';
+import { deleteAnimeReviewValidator } from './validators/deleteAnimeReviewValidator';
 
 class AnimeReviewController {
   private animeReviewService = new AnimeReviewService();
@@ -29,11 +30,20 @@ class AnimeReviewController {
   update = async (request: Request, response: Response) => {
     const { userId } = request.middlewares.authenticated;
 
-    const validatedInput = updateAnimeReviewValidator.parse({ ...request.body, ...request.params });
-    const animeReview = await this.animeReviewService.update({ ...validatedInput, userId });
+    const validatedInput = updateAnimeReviewValidator.parse({ ...request.body, ...request.params, userId });
+    const animeReview = await this.animeReviewService.update(validatedInput);
 
     const animeReviewResponse = toAnimeReviewResponse(animeReview);
     response.status(200).json(animeReviewResponse);
+  };
+
+  delete = async (request: Request, response: Response) => {
+    const { userId } = request.middlewares.authenticated;
+
+    const validatedInput = deleteAnimeReviewValidator.parse({ ...request.params, userId });
+    await this.animeReviewService.delete(validatedInput);
+
+    response.status(204).send();
   };
 }
 
