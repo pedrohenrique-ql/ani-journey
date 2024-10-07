@@ -1,4 +1,5 @@
 import { Anime, AnimeList } from '@/clients/anime/types';
+import { AnimeWithStatistics } from './AnimeService';
 
 export interface AnimeResponse extends Anime {
   rating: number;
@@ -15,16 +16,14 @@ export function toAnimeListResponse(animeList: AnimeList): SearchAnimeResponse {
     total: animeList.total,
     data: animeList.data.map((anime) => ({
       ...anime,
-      rating: 0,
       favorites: 0,
     })),
   };
 }
 
-export function toAnimeResponse(anime: Anime): AnimeResponse {
+export function toAnimeResponse(anime: AnimeWithStatistics): AnimeResponse {
   return {
     ...anime,
-    rating: 0,
     favorites: 0,
   };
 }

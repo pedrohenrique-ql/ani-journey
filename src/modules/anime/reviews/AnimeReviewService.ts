@@ -8,6 +8,7 @@ import { GetAnimeReviewsInput } from './validators/getAnimeReviewsValidator';
 import { UpdateAnimeReviewInput } from './validators/updateAnimeReviewValidator';
 import { AnimeReviewNotFoundError, AnimeReviewNotOwnedError } from './errors';
 import { DeleteAnimeReviewInput } from './validators/deleteAnimeReviewValidator';
+import { Anime } from '@/clients/anime/types';
 
 export interface AnimeReviewWithUser extends AnimeReview {
   user: User;
