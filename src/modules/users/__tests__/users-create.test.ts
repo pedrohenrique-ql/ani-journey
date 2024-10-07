@@ -34,6 +34,7 @@ describe('Users (Create)', async () => {
       username: user.username,
       email: user.email,
       role: user.role,
+      createdAt: user.createdAt.toISOString(),
     });
   });
 

@@ -122,8 +122,8 @@ devDependencies:
     specifier: ^2.0.5
     version: 2.0.5(@types/node@20.14.10)
   zimic:
-    specifier: 0.9.2-canary.7
-    version: 0.9.2-canary.7(typescript@5.5.3)
+    specifier: ^0.9.2
+    version: 0.9.2(typescript@5.5.3)
 
 packages:
 
@@ -7661,8 +7661,8 @@ packages:
     engines: {node: '>=18'}
     dev: true
 
-  /zimic@0.9.2-canary.7(typescript@5.5.3):
-    resolution: {integrity: sha512-Gsva3uV2IjqaxlfnlRav0dHsEbZvZKH902tqIGZoZZ+BXBwxnSCz2/2O4sxWCIErySIcx+1nFNXST6aFwx4WVQ==}
+  /zimic@0.9.2(typescript@5.5.3):
+    resolution: {integrity: sha512-y/KfjFGFZqJtwVo+6HA6pQMY8l2Eo0bg9fI6nDl15K6tfdVv+rch/hX2UGNrgrW3ImtBjkRGaa7fEyapnVscaA==}
     engines: {node: '>=18.13.0'}
     hasBin: true
     requiresBuild: true

@@ -30,17 +30,21 @@ export function createJikanAnimeResponse(
   };
 }
 
-export function toAnimeListResponse(jikanAnimeSearchResponse: JikanAnimeSearchResponse): SearchAnimeResponse {
+export function toAnimeListResponse(
+  jikanAnimeSearchResponse: JikanAnimeSearchResponse,
+  statistics: { rating?: number; favorites?: number }[] = [],
+): SearchAnimeResponse {
   const { data = [], pagination } = jikanAnimeSearchResponse;
   return {
     total: pagination?.items?.total ?? 1,
-    pageSize: pagination?.items?.per_page ?? data.length,
-    page: pagination?.items?.per_page ?? 1,
-    data: data.map((anime) => toAnimeResponse(anime)),
+    data: data.map((anime, index) => toAnimeResponse(anime, statistics[index] ?? undefined)),
   };
 }
 
-export function toAnimeResponse(jikanGetAnimeByIdResponse: JikanAnimeGetByIdResponse): AnimeResponse {
+export function toAnimeResponse(
+  jikanGetAnimeByIdResponse: JikanAnimeGetByIdResponse,
+  statistics: { rating?: number; favorites?: number } = {},
+): AnimeResponse {
   return {
     id: jikanGetAnimeByIdResponse.mal_id ?? 1,
     englishTitle: jikanGetAnimeByIdResponse.title_english ?? '',
@@ -50,7 +54,7 @@ export function toAnimeResponse(jikanGetAnimeByIdResponse: JikanAnimeGetByIdResp
     image: jikanGetAnimeByIdResponse.images?.jpg?.image_url ?? '',
     status: jikanGetAnimeByIdResponse.status ?? 'Finished Airing',
     releaseAir: jikanGetAnimeByIdResponse.year ?? 2013,
-    favorites: 0,
-    rating: 0,
+    favorites: statistics.favorites ?? 0,
+    rating: statistics.rating ?? 0,
   };
 }
