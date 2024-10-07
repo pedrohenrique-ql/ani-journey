@@ -3,9 +3,9 @@ import { Express } from 'express';
 import supertest from 'supertest';
 import { expect } from 'vitest';
 import { createUser } from './users';
-import { CreateUserInput } from '@/modules/users/validators/CreateUserValidator';
+import { User } from '@prisma/client';
 
-export async function createAuthenticatedUser(app: Express, partialUser: Partial<CreateUserInput> = {}) {
+export async function createAuthenticatedUser(app: Express, partialUser: Partial<User> = {}) {
   const userPassword = 'password';
   const { user: createdUser } = await createUser({ password: userPassword, ...partialUser });
 

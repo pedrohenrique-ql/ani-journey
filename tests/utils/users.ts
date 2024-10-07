@@ -1,9 +1,9 @@
 import prisma from '@/database/prismaClient';
-import { CreateUserInput } from '@/modules/users/validators/CreateUserValidator';
-import { hashPassword, verifyPassword } from '@/utils/auth';
+import { hashPassword } from '@/utils/auth';
 import { createId } from '@paralleldrive/cuid2';
+import { User } from '@prisma/client';
 
-export async function createUser(partialUser: Partial<CreateUserInput> = {}) {
+export async function createUser(partialUser: Partial<User> = {}) {
   const { password, ...restPartialUser } = partialUser;
   const userPassword = password ?? 'password';
   const hashedPassword = await hashPassword(userPassword);
