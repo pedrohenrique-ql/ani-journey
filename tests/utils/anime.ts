@@ -37,7 +37,7 @@ export function toAnimeListResponse(
   const { data = [], pagination } = jikanAnimeSearchResponse;
   return {
     total: pagination?.items?.total ?? 1,
-    data: data.map((anime, index) => toAnimeResponse(anime, statistics[index] ?? undefined)),
+    animeList: data.map((anime, index) => toAnimeResponse(anime, statistics[index] ?? undefined)),
   };
 }
 
