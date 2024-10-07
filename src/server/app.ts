@@ -8,6 +8,7 @@ import animeRouter from '@/modules/anime/router';
 import userAnimeListRouter from '@/modules/users/anime-list/router';
 import userAnimeStatusRouter from '@/modules/users/anime-status/router';
 import animeReviewRouter from '@/modules/anime/reviews/router';
+import statisticRouter from '@/modules/statistics/router';
 
 async function createApp() {
   const app = express();
@@ -24,6 +25,7 @@ async function createApp() {
   app.use(userAnimeListRouter);
   app.use(userAnimeStatusRouter);
   app.use(animeReviewRouter);
+  app.use(statisticRouter);
 
   app.use(errorHandler);
 
