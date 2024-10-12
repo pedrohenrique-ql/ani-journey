@@ -2,7 +2,10 @@
   "name": "ani-journey",
   "version": "0.0.0",
   "description": "",
-  "packageManager": "pnpm@8.15.5",
+  "packageManager": "pnpm@9.12.1",
+  "engines": {
+    "node": ">=20.11.0 <21"
+  },
   "scripts": {
     "dev": "dotenv -c development -- tsx watch src/server.ts",
     "deps:up": "docker compose up ani-journey-postgres-db -d --wait",
