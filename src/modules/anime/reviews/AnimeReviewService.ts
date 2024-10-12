@@ -9,6 +9,7 @@ import { UpdateAnimeReviewInput } from './validators/updateAnimeReviewValidator'
 import { AnimeReviewNotFoundError, AnimeReviewNotOwnedError } from './errors';
 import { DeleteAnimeReviewInput } from './validators/deleteAnimeReviewValidator';
 import { Anime } from '@/clients/anime/types';
+import { BadRequestError } from '@/errors/http';
 
 export interface AnimeReviewWithUser extends AnimeReview {
   user: User;
@@ -22,6 +23,19 @@ class AnimeReviewService {
 
     if (!anime) {
       throw new AnimeNotFound(inputData.animeId);
+    }
+
+    const existingReview = await prisma.animeReview.findUnique({
+      where: {
+        userId_animeId: {
+          animeId: inputData.animeId,
+          userId: inputData.userId,
+        },
+      },
+    });
+
+    if (existingReview) {
+      throw new BadRequestError('User already reviewed this anime.');
     }
 
     const review = await prisma.animeReview.create({
