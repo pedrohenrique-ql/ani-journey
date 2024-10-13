@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "dotenv -c development -- tsx watch src/server.ts",
     "deps:up": "docker compose up ani-journey-postgres-db -d --wait",
-    "deps:prepare": "pnpm db:dev migrate dev",
+    "deps:prepare": "pnpm db:dev migrate deploy",
+    "migration:create": "prisma migrate dev --create-only",
     "db:dev": "dotenv -c development -- prisma",
     "start": "dotenv -c production -- node dist/server.js",
     "build": "tsc",
