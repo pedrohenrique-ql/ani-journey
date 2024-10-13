@@ -4,10 +4,10 @@ O AniJourney é um site voltado para os amantes de animes, sendo possível explo
 
 ## Requisitos
 
-[Node.js v20.11.0](https://nodejs.org/en/download/)
-[pnpm v9.12.1](https://pnpm.io/installation)
-[Docker](https://docs.docker.com/engine/install/)
-[Docker Compose](https://docs.docker.com/compose/install/)
+- [Node.js v20.11.0](https://nodejs.org/en/download/)
+- [pnpm v9.12.1](https://pnpm.io/installation)
+- [Docker](https://docs.docker.com/engine/install/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Recursos Principais
 
